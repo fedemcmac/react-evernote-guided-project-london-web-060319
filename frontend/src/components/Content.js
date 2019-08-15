@@ -11,23 +11,34 @@ import Instructions from './Instructions';
           refactor to get this Content component to work.
 */
 class Content extends Component {
-  renderContent = () => {
-    if (false) {
-      return <NoteEditor />;
-    } else if (false) {
-      return <NoteViewer />;
-    } else {
-      return <Instructions />;
-    }
-  }
 
+  
+    
+
+    renderContent = (selectedNote) => {
+      
+      if(selectedNote && this.props.editMode) {
+        return <NoteEditor {...this.props.selectedNote}/>
+      } else if (selectedNote) {
+        return <NoteViewer {...this.props.selectedNote} editNote={this.props.toggleEditMode}/>;
+      } else {
+        return <Instructions />;
+      }
+    }
+  
   render() {
+
     return (
       <div className='master-detail-element detail'>
-        {this.renderContent()}
+
+        {
+          this.renderContent(this.props.selectedNote)
+        }
+        
       </div>
     );
   }
 }
 
 export default Content;
+// this.props.selectedNote ? <NoteViewer {...this.props.selectedNote} /> : <Instructions />
