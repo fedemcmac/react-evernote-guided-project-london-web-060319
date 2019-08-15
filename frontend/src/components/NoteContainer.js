@@ -23,7 +23,7 @@ class NoteContainer extends Component {
 
   selectNote = id => {
     this.setState({ selectedNoteId: id })
-    this.setState({ editMode: false})
+    this.setState({ editMode: false })
   }
 
   findNote = noteId => this.state.notes.find(note => note.id === noteId)
@@ -35,16 +35,39 @@ class NoteContainer extends Component {
       searchTerm: event.target.value
     })
   }
-  // changeSearchTerm = (searchTerm) => this.setState({ searchTerm })
 
   filterNotesBySearchTerm = () => this.state.notes.filter(
-      note => note.title.toLocaleLowerCase().includes(this.state.searchTerm.toLocaleLowerCase()) 
+    note => note.title.toLocaleLowerCase().includes(this.state.searchTerm.toLocaleLowerCase())
       || note.body.toLocaleLowerCase().includes(this.state.searchTerm.toLocaleLowerCase())
-    )
-    // this.state.notes.map(note => note.title.includes(this.state.searchTerm))
-    toggleEditMode = () => {
-      this.setState({editMode: !this.state.editMode})
-    }
+  )
+
+  toggleEditMode = () => {
+    this.setState({ editMode: !this.state.editMode })
+  }
+
+  toggleNewMode = () => {
+    this.setState({ selectedNoteId: null})
+    this.toggleEditMode()
+  }
+
+  submitUpdatedNote = (updatedNote, event) => {
+    event.preventDefault()
+    this.toggleEditMode()
+    API.updateNote(updatedNote)
+      .then(
+        this.setState({ notes: this.state.notes.map(note => note.id === updatedNote.id ? updatedNote : note) })
+      )
+  }
+
+  submitNewNote = (note, event) => {
+    event.preventDefault()
+    this.toggleEditMode()
+    this.setState({ selectedNoteId: note.id})
+    API.newNote(note)
+      .then(
+        this.setState({ notes: [...this.state.notes, note] })
+      )
+  }
 
 
   render() {
@@ -55,8 +78,17 @@ class NoteContainer extends Component {
       <Fragment>
         <Search onSearchChange={this.handleChange} searchTerm={this.state.searchTerm} />
         <div className='container'>
-          <Sidebar notes={notes} selectNote={this.selectNote} />
-          <Content selectedNote={this.getSelectedNote()} editMode={this.state.editMode} toggleEditMode={this.toggleEditMode} />
+          <Sidebar notes={notes}
+            selectNote={this.selectNote}
+            toggleNewMode={this.toggleNewMode}
+          />
+          <Content
+            selectedNote={this.getSelectedNote()}
+            editMode={this.state.editMode}
+            toggleEditMode={this.toggleEditMode}
+            submitUpdatedNote={this.submitUpdatedNote}
+            submitNewNote={this.submitNewNote}
+          />
         </div>
       </Fragment>
     );

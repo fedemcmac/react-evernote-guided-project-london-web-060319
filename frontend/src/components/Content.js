@@ -18,9 +18,11 @@ class Content extends Component {
     renderContent = (selectedNote) => {
       
       if(selectedNote && this.props.editMode) {
-        return <NoteEditor {...this.props.selectedNote}/>
+        return <NoteEditor {...this.props.selectedNote} editNote={this.props.toggleEditMode} submitNote={this.props.submitUpdatedNote} />
       } else if (selectedNote) {
         return <NoteViewer {...this.props.selectedNote} editNote={this.props.toggleEditMode}/>;
+      } else if (this.props.editMode) {
+        return <NoteEditor {...this.props.selectedNote} editNote={this.props.toggleEditMode} submitNote={this.props.submitNewNote} />
       } else {
         return <Instructions />;
       }
@@ -30,11 +32,9 @@ class Content extends Component {
 
     return (
       <div className='master-detail-element detail'>
-
         {
           this.renderContent(this.props.selectedNote)
         }
-        
       </div>
     );
   }
